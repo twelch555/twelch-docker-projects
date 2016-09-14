@@ -1,0 +1,5 @@
+docker run -d \
+    -v /run/docker/plugins/:/run/docker/plugins/ \
+    -v /var/lib/docker/plugin-data/:/var/lib/docker/plugin-data/ \
+    -v /var/lib/docker-data/:/var/lib/docker-data/ \
+        cwspear/docker-local-persist-volume-plugin

@@ -1,0 +1,14 @@
+version: '2'
+
+services:
+  www:
+    image: dockercloud/hello-world:latest
+    expose:
+      - 80
+      - 443
+    environment:
+      VIRTUAL_HOST: your-url-or-urls
+      LETSENCRYPT_HOST: your-url-or-urls
+      LETSENCRYPT_EMAIL: your-email
+      LETSENCRYPT_TEST: "true"
+    network_mode: "bridge"

@@ -1,0 +1,38 @@
+# Creates the two services on a docker network called nginx-proxy-letsencrypt
+# Be sure to add additional docker networks to the nginx-proxy container as follows:
+# docker network connect your-network-name nginx-proxy
+# See the readme file for more information
+version: '2'
+services:
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    restart: always
+    container_name: nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - /etc/nginx/vhost.d:/etc/nginx/vhost.d
+      - /etc/nginx/certs:/etc/nginx/certs:ro
+      - /usr/share/nginx/html
+    networks:
+      - nginx-proxy-letsencrypt
+
+  nginx-letsencrypt:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    restart: always
+    container_name: nginx-letsencrypt
+    depends_on:
+      - nginx-proxy
+    volumes:
+      - /etc/nginx/certs:/etc/nginx/certs:rw
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    volumes_from:
+      - nginx-proxy
+
+    networks:
+      - nginx-proxy-letsencrypt
+
+networks:
+  nginx-proxy-letsencrypt:

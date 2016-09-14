@@ -1,0 +1,24 @@
+version: '2'
+
+services:
+  one:
+    image: alpine
+    container_name: data-test-one
+    working_dir: /your/path/
+    command: sleep 600
+    volumes:
+      - data1:/your/path/
+
+  two:
+    image: alpine
+    container_name: data-test-two
+    working_dir:/your/path/
+    command: sleep 600
+    volumes:
+            - data1:/your/path/
+
+volumes:
+  data1:
+    driver: local-persist
+    driver_opts:
+      mountpoint: /your/path/

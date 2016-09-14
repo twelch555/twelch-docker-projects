@@ -1,0 +1,71 @@
+version: '2'
+
+services:
+  wordpress:
+    image: wordpress:latest
+    restart: always
+    container_name: your-container-name
+    ports:
+      - 80
+      - 443
+    depends_on:
+      - mysql
+      - redis
+    links:
+      - mysql
+      - redis
+    environment:
+      VIRTUAL_HOST: your-url-or-urls
+      LETSENCRYPT_HOST: your-url-or-urls
+      LETSENCRYPT_EMAIL: your-email
+      WORDPRESS_DB_HOST: mysql
+      WORDPRESS_DB_NAME: your-db-name
+      WORDPRESS_DB_USER: your-db-user
+      WORDPRESS_DB_PASSWORD: your-db-password
+    working_dir: /var/www/html
+    volumes:
+      - your-docker-volume:/your/path/ # use this to persist uploads folder or wordpress install directory
+      - /your/path/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+
+    networks:
+      - your-network-name-front
+      - your-network-name-back
+
+  mysql:
+    image: mariadb:latest
+    restart: always
+    container_name: your-container-name
+    environment:
+      MYSQL_ROOT_PASSWORD: your-msql-root-pw
+      MYSQL_DATABASE: your-db-name
+      MYSQL_USER: your-db-user
+      MYSQL_PASSWORD: your-db-password
+    volumes:
+      - /your/path/:/var/lib/mysql # for easy database access/back up etc
+    networks:
+      - eple-back
+
+
+  redis:
+    image: redis
+    restart: always
+    container_name: your-container-name
+    networks:
+      - your-network-name-back
+
+
+networks:
+  your-network-name-front: # use for only those containers that need to be exposed publicly
+
+  your-metwork-name-back: # use for inter-container communication
+
+volumes:
+  your-docker-volume-1:
+    driver: local-persist
+    driver_opts:
+      mountpoint: /your/path/ # volume for persisting wordpress uploads or root directory
+
+  your-docker-volume-2:
+    driver: local-persist
+    driver_opts:
+      mountpoint: /your/path/ # used for persisting msql database files

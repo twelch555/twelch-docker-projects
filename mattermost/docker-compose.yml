@@ -1,0 +1,77 @@
+version: '2'
+
+services:
+  db:
+    build: db
+    restart: always
+    container_name: db
+    expose:
+      - "5432"
+    networks:
+      - your-network-back
+    volumes:
+      - your-db:/var/lib/postgresql/data
+      - /etc/localtime:/etc/localtime:ro
+    # uncomment the following to enable backup
+    #environment:
+    #  - AWS_ACCESS_KEY_ID=XXXX
+    #  - AWS_SECRET_ACCESS_KEY=XXXX
+    #  - WALE_S3_PREFIX=s3://BUCKET_NAME/PATH
+    #  - AWS_REGION=us-east-1
+  app:
+    build: app
+    restart: always
+    container_name: app
+    expose:
+      - "80"
+    links:
+      - db:db
+    networks:
+      - your-network-back
+      - your-network-front
+    volumes:
+      - your-app-cfg:/mattermost/config:rw
+      - your-app-data:/mattermost/data:rw
+      - /etc/localtime:/etc/localtime:ro
+  web:
+    build: web
+    restart: always
+    container_name: web
+    ports:
+      - "80"
+      - "443"
+    links:
+      - app:app
+    networks:
+      - your-network-front
+    volumes:
+        # This directory must have cert files
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      VIRTUAL_HOST: your url
+      MATTERMOST_ENABLE_SSL: 'false'
+      PLATFORM_PORT_80_TCP_PORT: 80
+
+networks:
+  your-network-front:
+
+  your-network-back:
+
+volumes:
+  your-db:
+    driver: local-persist
+    driver_opts:
+      mountpoint: /your/path/db
+
+  your-app-cfg:
+    driver: local-persist
+    driver_opts:
+      mountpoint: /your/path/app/cfg
+
+  your-app-data:
+    driver: local-persist
+    driver_opts:
+      mountpoint: /your/path/app/data
+
+
+
