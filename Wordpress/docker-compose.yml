@@ -43,7 +43,7 @@ services:
     volumes:
       - /your/path/:/var/lib/mysql # for easy database access/back up etc
     networks:
-      - eple-back
+      - Wordpress-back
 
 
   redis:

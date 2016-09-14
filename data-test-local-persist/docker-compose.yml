@@ -3,7 +3,7 @@ version: '2'
 services:
   one:
     image: alpine
-    container_name: data-test-one
+    container_name: data-test-local-persist-one
     working_dir: /your/path/
     command: sleep 600
     volumes:
@@ -11,7 +11,7 @@ services:
 
   two:
     image: alpine
-    container_name: data-test-two
+    container_name: data-test-local-persist-two
     working_dir:/your/path/
     command: sleep 600
     volumes:
